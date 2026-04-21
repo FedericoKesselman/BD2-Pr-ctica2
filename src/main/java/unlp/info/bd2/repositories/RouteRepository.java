@@ -29,5 +29,5 @@ public interface RouteRepository extends CrudRepository<Route, Long> {
     GROUP BY p.route
     ORDER BY AVG(rv.rating) DESC
     """)
-    List<Route> getTop3RoutesWithMaxRating(Pageable pageable) 
+    List<Route> getTop3RoutesWithMaxRating(Pageable pageable);
 }
