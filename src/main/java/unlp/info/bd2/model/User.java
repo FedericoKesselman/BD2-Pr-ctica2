@@ -1,29 +1,28 @@
 package unlp.info.bd2.model;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import jakarta.persistence.Entity;
+
+@Entity
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class User {
-
     private Long id;
-
     private String username;
-
     private String password;
-
     private String name;
-
     private String email;
-
     private Date birthdate;
-
     private String phoneNumber;
-
     private boolean active;
-
     private List<Purchase> purchaseList;
-
+    
+    private boolean deleted = false;
 
     public User(String username, String password, String name, String email, Date birthdate, String phoneNumber) {
 		this.username = username;

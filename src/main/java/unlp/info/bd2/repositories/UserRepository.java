@@ -28,4 +28,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     WHERE rv.rating = 1
     """)
     List<TourGuideUser> getTourGuidesWithRating1();  
+    
+    List<User> findById(int id);
 }

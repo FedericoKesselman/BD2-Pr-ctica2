@@ -10,7 +10,7 @@ public class Supplier {
 
     private String authorizationNumber;
 
-    private List<Service> services;
+    private List<Serv> services;
 
     public Long getId() {
         return id;
@@ -36,11 +36,11 @@ public class Supplier {
         this.authorizationNumber = authorizationNumber;
     }
 
-    public List<Service> getServices() {
+    public List<Serv> getServices() {
         return services;
     }
 
-    public void setServices(List<Service> services) {
+    public void setServices(List<Serv> services) {
         this.services = services;
     }
 

@@ -22,7 +22,7 @@ public class TourServiceImpl implements ToursService {
     private PurchaseRepository purchaseRepo;
     private ServiceRepository serviceRepo;
     private SupplierRepository supplierRepo;
-    private ReviewRepository reviewRepo;
+    private ReviewRepository reviewRepo; 
 
     @Autowired
     public TourServiceImpl(UserRepository userRepo,
@@ -163,21 +163,20 @@ public class TourServiceImpl implements ToursService {
 	@Override
 	public DriverUser createDriverUser(String username, String password, String fullName, String email, Date birthdate,
 			String phoneNumber, String expedient) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		DriverUser driverUser = new DriverUser(username, password, fullName, email, birthdate, phoneNumber, expedient);
+        return userRepo.save(driverUser);
 	}
 
 	@Override
 	public TourGuideUser createTourGuideUser(String username, String password, String fullName, String email,
-			Date birthdate, String phoneNumber, String education) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		Date birthdate, String phoneNumber, String education) throws ToursException {
+		TourGuideUser tourGuideUser = new TourGuideUser(username, password, fullName, email, birthdate, phoneNumber, education);
+        return userRepo.save(tourGuideUser);
 	}
 
 	@Override
 	public Optional<User> getUserById(Long id) throws ToursException {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return userRepo.findById(id);
 	}
 
 	@Override
