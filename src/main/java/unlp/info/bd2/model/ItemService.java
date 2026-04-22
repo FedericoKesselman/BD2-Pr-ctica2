@@ -42,11 +42,11 @@ public class ItemService {
         this.purchase = purchase;
     }
 
-    public Service getService() {
+    public Serv getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(Serv service) {
         this.service = service;
     }
 }
