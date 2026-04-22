@@ -9,9 +9,15 @@ public class ItemService {
 
     private Purchase purchase;
 
-    private Service service;
+    private Serv service;
 
-    public Long getId() {
+    public ItemService(int quantity, Serv managedService, Purchase purchase) {
+    	this.quantity = quantity;
+    	this.service = managedService;
+    	this.purchase = purchase;
+	}
+
+	public Long getId() {
         return id;
     }
 

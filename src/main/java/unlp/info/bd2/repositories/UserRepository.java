@@ -1,6 +1,11 @@
 package unlp.info.bd2.repositories;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import java.util.*;
+
+import unlp.info.bd2.model.TourGuideUser;
 import unlp.info.bd2.model.User;
 
 public interface UserRepository extends CrudRepository<User, Long> {
@@ -22,5 +27,5 @@ public interface UserRepository extends CrudRepository<User, Long> {
     JOIN r.tourGuides tg
     WHERE rv.rating = 1
     """)
-    List<User> getTourGuidesWithRating1();  
+    List<TourGuideUser> getTourGuidesWithRating1();  
 }

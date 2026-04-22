@@ -6,6 +6,7 @@ import unlp.info.bd2.utils.ToursException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
-public class TourseServiceImpl implements ToursService {
+public class TourServiceImpl implements ToursService {
 
     private UserRepository userRepo;
     private RouteRepository routeRepo;
@@ -24,7 +25,7 @@ public class TourseServiceImpl implements ToursService {
     private ReviewRepository reviewRepo;
 
     @Autowired
-    public TourseServiceImpl(UserRepository userRepo,
+    public TourServiceImpl(UserRepository userRepo,
                          RouteRepository routeRepo,
                          PurchaseRepository purchaseRepo,
                          ServiceRepository serviceRepo,
@@ -49,14 +50,14 @@ public class TourseServiceImpl implements ToursService {
     @Override
     @Transactional
     public Purchase createPurchase(String code, Route route, User user) {
-        Purchase purchase = new Purchase(code, new Date(), route, user);
+        Purchase purchase = new Purchase(code, route, user);
         return purchaseRepo.save(purchase);
     }
 
     @Override
     @Transactional
-    public Service updateServicePriceById(Long id, float newPrice) throws ToursException {
-        Service service = serviceRepo.findById(id).orElse(null);
+    public Serv updateServicePriceById(Long id, float newPrice) throws ToursException {
+        Serv service = serviceRepo.findById(id).orElse(null);
 
         if (service == null) 
             throw new ToursException("Service not found");
@@ -65,17 +66,16 @@ public class TourseServiceImpl implements ToursService {
         return service;
     }
 
-    @Override
     @Transactional
-    public ItemService addItemToPurchase(Service service, int quantity, Purchase purchase)  throws ToursException {
+    public ItemService addItemToPurchase(Serv service, int quantity, Purchase purchase)  throws ToursException {
 
         Purchase managedPurchase = purchaseRepo.findById(purchase.getId()).orElse(null);
-        Service managedService = serviceRepo.findById(service.getId()).orElse(null);
+        Serv managedService = serviceRepo.findById(service.getId()).orElse(null);
 
         if (managedPurchase == null || managedService == null) 
             throw new ToursException("Purchase or Service not found");
 
-        ItemService item = new ItemService(quantity, managedService);
+        ItemService item = new ItemService(quantity, managedService, purchase);
         managedPurchase.addItem(item);
 
         return item;
@@ -108,7 +108,7 @@ public class TourseServiceImpl implements ToursService {
     // Inciso D
     @Override
     @Transactional(readOnly = true)
-    public long getCountOfPurchasesBetweenDates(Date start, Date end) {
+    public Long getCountOfPurchasesBetweenDates(Date start, Date end) {
         return purchaseRepo.countByDateBetween(start, end);
     }
 
@@ -116,13 +116,13 @@ public class TourseServiceImpl implements ToursService {
     @Override
     @Transactional(readOnly = true)
     public List<Route> getRoutesWithStop(Stop stop) {
-        return routeRepo.findByStops(stop);
+        return routeRepo.findyByStop(stop);
     }
 
     // Inciso F
     @Override
     @Transactional(readOnly = true)
-    public int getMaxStopOfRoutes() {
+    public Long getMaxStopOfRoutes() {
         return routeRepo.getMaxStopOfRoutes();
     }
 
@@ -144,9 +144,9 @@ public class TourseServiceImpl implements ToursService {
     // Inciso I
     @Override
     @Transactional(readOnly = true)
-    public Service getMostDemandedService() {
+    public Serv getMostDemandedService() {
         Pageable pageable = PageRequest.of(0, 1);
-        List<Service> result = serviceRepo.getMostDemandedService(pageable);
+        List<Serv> result = serviceRepo.getMostDemandedService(pageable);
         return result.isEmpty() ? null : result.get(0);
     }
 
@@ -156,4 +156,143 @@ public class TourseServiceImpl implements ToursService {
     public List<TourGuideUser> getTourGuidesWithRating1() {
         return userRepo.getTourGuidesWithRating1();
     }
+
+    
+    
+    // -----------------
+	@Override
+	public DriverUser createDriverUser(String username, String password, String fullName, String email, Date birthdate,
+			String phoneNumber, String expedient) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TourGuideUser createTourGuideUser(String username, String password, String fullName, String email,
+			Date birthdate, String phoneNumber, String education) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<User> getUserById(Long id) throws ToursException {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<User> getUserByUsername(String username) throws ToursException {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public User updateUser(User user) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteUser(User user) throws ToursException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Stop createStop(String name, String description) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Stop> getStopByNameStart(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Route createRoute(String name, float price, float totalKm, int maxNumberOfUsers, List<Stop> stops)
+			throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<Route> getRouteById(Long id) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public List<Route> getRoutesBelowPrice(float price) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void assignDriverByUsername(String username, Long idRoute) throws ToursException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void assignTourGuideByUsername(String username, Long idRoute) throws ToursException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Supplier createSupplier(String businessName, String authorizationNumber) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Serv addServiceToSupplier(String name, float price, String description, Supplier supplier)
+			throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<Supplier> getSupplierById(Long id) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Supplier> getSupplierByAuthorizationNumber(String authorizationNumber) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Serv> getServiceByNameAndSupplierId(String name, Long id) throws ToursException {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Purchase createPurchase(String code, Date date, Route route, User user) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<Purchase> getPurchaseByCode(String code) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public void deletePurchase(Purchase purchase) throws ToursException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Review addReviewToPurchase(int rating, String comment, Purchase purchase) throws ToursException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

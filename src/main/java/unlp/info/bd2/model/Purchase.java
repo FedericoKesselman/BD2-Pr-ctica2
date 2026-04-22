@@ -23,7 +23,12 @@ public class Purchase {
 
 
 
-    public Long getId() {
+    public Purchase(String code, Route route, User user) {
+		this.code = code;
+		this.user = user;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -86,4 +91,8 @@ public class Purchase {
     public void setItemServiceList(List<ItemService> itemServiceList) {
         this.itemServiceList = itemServiceList;
     }
+
+	public void addItem(ItemService item) {
+		this.itemServiceList.add(item);
+	}
 }

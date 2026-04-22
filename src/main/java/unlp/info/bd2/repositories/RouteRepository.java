@@ -1,7 +1,11 @@
 package unlp.info.bd2.repositories;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import java.util.*;
 import unlp.info.bd2.model.Route;
+import unlp.info.bd2.model.Stop;
 
 public interface RouteRepository extends CrudRepository<Route, Long> {
 
