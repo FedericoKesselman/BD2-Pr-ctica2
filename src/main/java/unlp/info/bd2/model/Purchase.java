@@ -1,34 +1,83 @@
 package unlp.info.bd2.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "purchases")
 public class Purchase {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "purchase_seq")
+    @SequenceGenerator(name = "purchase_seq", sequenceName = "purchase_sequence", allocationSize = 50)
     Long id;
 
+    @Column(nullable = false, unique = true)
     private String code;
 
+    @Column(nullable = false)
     private float totalPrice;
 
+    @Column(nullable = false)
     private Date date;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 
+    @OneToOne(mappedBy = "purchase",
+          optional = true,
+          fetch = FetchType.LAZY,
+          cascade = {
+	          CascadeType.PERSIST, 
+	          CascadeType.MERGE, 
+	          CascadeType.REMOVE
+		  })
     private Review review;
 
-    private List<ItemService> itemServiceList;
+    @OneToMany(mappedBy = "purchase", 
+           cascade = CascadeType.ALL,
+           orphanRemoval = true,
+           fetch = FetchType.EAGER)
+    private List<ItemService> itemServiceList = new ArrayList<>();
+    
+    public Purchase(String code, Date date2, Route route, User user) {
+    	this.code = code;
+    	this.user = user;
+    	this.date = date2;
+    	this.route = route;
+    }
 
+    public Purchase(String code2, Route route2, User user2) {
+    	this.code = code2;
+    	this.route = route2;
+    	this.user = user2;
+    	this.date = new Date();
+    }
+    
+    public Purchase() {
+    }
 
-
-    public Purchase(String code, Route route, User user) {
-		this.code = code;
-		this.user = user;
-	}
-
-	public Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -92,7 +141,15 @@ public class Purchase {
         this.itemServiceList = itemServiceList;
     }
 
-	public void addItem(ItemService item) {
-		this.itemServiceList.add(item);
-	}
+    public void addItem(ItemService item) {
+        itemServiceList.add(item);
+        item.setPurchase(this);
+        this.totalPrice += item.getService().getPrice() * item.getQuantity();
+    }
+
+    public void removeItem(ItemService item) {
+        itemServiceList.remove(item);
+        item.setPurchase(null);
+        this.totalPrice -= item.getService().getPrice() * item.getQuantity();
+    }
 }

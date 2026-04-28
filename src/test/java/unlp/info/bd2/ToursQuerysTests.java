@@ -28,7 +28,6 @@ import org.junit.Assert;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {SpringDataConfiguration.class, AppConfig.class, DBInitializer.class}, loader = AnnotationConfigContextLoader.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
 @Rollback(true)
@@ -135,7 +134,7 @@ public class ToursQuerysTests {
 
     @Test
     void getMostDemandedServiceTest() throws ToursException {
-        Service mostDemandedService = this.service.getMostDemandedService();
+        Serv mostDemandedService = this.service.getMostDemandedService();
         assertEquals("souvenir t-shirt", mostDemandedService.getName());
         assertEquals("I love Buenos Aires t-shirt", mostDemandedService.getDescription());
     }

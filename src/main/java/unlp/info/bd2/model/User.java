@@ -1,36 +1,78 @@
 package unlp.info.bd2.model;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import jakarta.persistence.Entity;
-
 @Entity
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
-@Where(clause = "deleted = false")
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
+@SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
+@Where(clause = "active = true")
 public class User {
-    private Long id;
-    private String username;
-    private String password;
-    private String name;
-    private String email;
-    private Date birthdate;
-    private String phoneNumber;
-    private boolean active;
-    private List<Purchase> purchaseList;
-    
-    private boolean deleted = false;
 
-    public User(String username, String password, String name, String email, Date birthdate, String phoneNumber) {
-		this.username = username;
-		this.password = password;
-		this.name = name;
-		this.email = email;
-		this.birthdate = birthdate;
-		this.phoneNumber = phoneNumber;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 50)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column
+    private String email;
+
+    @Column
+    private Date birthdate;
+
+    @Column
+    private String phoneNumber;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @OneToMany(
+        mappedBy = "user", 
+        fetch = FetchType.LAZY,
+        cascade = {
+            CascadeType.PERSIST, 
+            CascadeType.MERGE
+        })
+    private List<Purchase> purchaseList = new ArrayList<>();
+    
+    public User() {}
+
+    public User(String username2, String password2, String name2, String email2, Date birthdate2, String phoneNumber2) {
+		this.username = username2;
+		this.password = password2;
+		this.name = name2;
+		this.email = email2;
+		this.birthdate = birthdate2;
+		this.phoneNumber = phoneNumber2;
 	}
 
 	public Long getId() {
@@ -103,5 +145,9 @@ public class User {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+    
+    public void deletePurchase(Purchase purchase) {
+    	this.purchaseList.remove(purchase);
     }
 }

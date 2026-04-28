@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-@ContextConfiguration(classes = {SpringDataConfiguration.class, AppConfig.class}, loader = AnnotationConfigContextLoader.class)
 @ExtendWith(SpringExtension.class)
 @Transactional
 @Rollback(true)
@@ -176,7 +175,7 @@ class ToursApplicationTests {
 		Supplier supplier1 = this.toursService.createSupplier("Supplier1", "000111");
 		assertNotNull(supplier1.getId());
 		assertEquals("Supplier1" , supplier1.getBusinessName());
-		Service service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
+		Serv service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
 		assertNotNull(service1.getId());
 		assertEquals("Servicio1", service1.getName());
 		assertEquals(supplier1.getId(), service1.getSupplier().getId());
@@ -194,12 +193,12 @@ class ToursApplicationTests {
 		Optional<Supplier> optionalSupplier3 = this.toursService.getSupplierByAuthorizationNumber("001111");
 		assertFalse(optionalSupplier3.isPresent());
 
-		Optional<Service> optionalService1 = this.toursService.getServiceByNameAndSupplierId("Servicio1", supplier1.getId());
+		Optional<Serv> optionalService1 = this.toursService.getServiceByNameAndSupplierId("Servicio1", supplier1.getId());
 		assertTrue(optionalService1.isPresent());
-		Service service2 = optionalService1.get();
+		Serv service2 = optionalService1.get();
 		assertEquals(service1.getId(), service2.getId());
 		assertEquals(service1.getDescription(),"primer servicio");
-		Optional<Service> optionalService2 = this.toursService.getServiceByNameAndSupplierId("Servicio2", supplier1.getId());
+		Optional<Serv> optionalService2 = this.toursService.getServiceByNameAndSupplierId("Servicio2", supplier1.getId());
 		assertFalse(optionalService2.isPresent());
 
 		assertThrows(ToursException.class, () -> this.toursService.createSupplier("Supplier2", "000111"), "Constraint Violation");
@@ -208,10 +207,10 @@ class ToursApplicationTests {
 	@Test
 	void updateServicePriceTest() throws ToursException {
 		Supplier supplier1 = this.toursService.createSupplier("Supplier1", "000111");
-		Service service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
+		Serv service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
 		assertEquals(500f, service1.getPrice());
 
-		Service service2 = this.toursService.updateServicePriceById(service1.getId(), 600f);
+		Serv service2 = this.toursService.updateServicePriceById(service1.getId(), 600f);
 		assertEquals(600f, service2.getPrice());
 
 		assertThrows(ToursException.class, () -> this.toursService.updateServicePriceById(100000L, 500f), "No existe el producto");
@@ -227,8 +226,8 @@ class ToursApplicationTests {
 		Route route1 = this.toursService.createRoute("Estadios", 20000, 55.5f, 2, stops1);
 		Supplier supplier1 = this.toursService.createSupplier("Supplier1", "000111");
 		Supplier supplier2 = this.toursService.createSupplier("Supplier2", "000222");
-		Service service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
-		Service service2 = this.toursService.addServiceToSupplier("Servicio2", 1000f, "segundo servicio", supplier2);
+		Serv service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
+		Serv service2 = this.toursService.addServiceToSupplier("Servicio2", 1000f, "segundo servicio", supplier2);
 
 		Purchase purchase1 = this.toursService.createPurchase("100", dyes, route1, user1);
 		assertNotNull(purchase1.getId());
@@ -264,8 +263,8 @@ class ToursApplicationTests {
 		List<Stop> stops1 = new ArrayList<Stop>(Arrays.asList(stop1,stop2, stop3));
 		Route route1 = this.toursService.createRoute("Estadios", 20000, 55.5f, 2, stops1);
 		Supplier supplier1 = this.toursService.createSupplier("Supplier1", "000111");
-		Service service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
-		Service service2 = this.toursService.addServiceToSupplier("Servicio2", 1000f, "segundo servicio", supplier1);
+		Serv service1 = this.toursService.addServiceToSupplier("Servicio1", 500f, "primer servicio", supplier1);
+		Serv service2 = this.toursService.addServiceToSupplier("Servicio2", 1000f, "segundo servicio", supplier1);
 		Purchase purchase1 = this.toursService.createPurchase("100", dyes, route1, user1);
 		ItemService itemService1 = this.toursService.addItemToPurchase(service1, 1, purchase1);
 		ItemService itemService2 = this.toursService.addItemToPurchase(service2, 2, purchase1);

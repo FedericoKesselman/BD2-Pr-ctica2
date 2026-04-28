@@ -34,4 +34,14 @@ public interface RouteRepository extends CrudRepository<Route, Long> {
     ORDER BY AVG(rv.rating) DESC
     """)
     List<Route> getTop3RoutesWithMaxRating(Pageable pageable);
+    
+    List<Route> findByPriceLessThan(float price);
+
+	Optional<Route> finById(Long idRoute);
+
+	@Query("SELECT COUNT(r) FROM Route r JOIN r.tourGuideList g WHERE g.id ) :id")
+	Long countRoutesByGuide(Long id);
+
+	@Query("SELECT COUNT(p) FROM Purchase p WHERE p.route.id = :id")
+	long countPurchasesByRoute(Long id);
 }

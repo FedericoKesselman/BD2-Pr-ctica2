@@ -3,20 +3,57 @@ package unlp.info.bd2.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+
+@Entity
+@Table(
+    name = "services",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
+    }
+)
 public class Serv {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_seq")
+    @SequenceGenerator(name = "service_seq", sequenceName = "service_sequence", allocationSize = 50)
     private Long id;
 
+    @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(nullable = false)
     private float price;
 
+    @Column
     private String description;
 
-    private List<ItemService> itemServiceList;
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
+    private List<ItemService> itemServiceList = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
     private Supplier supplier;
-
+    
+    public Serv(String name2, float price2, String description2, Supplier supplier2) {
+    	this.name = name2;
+    	this.price = price2;
+    	this.description = description2;
+    	this.supplier = supplier2;
+    }
+    
+    public Serv() {}
 
     public Long getId() {
         return id;

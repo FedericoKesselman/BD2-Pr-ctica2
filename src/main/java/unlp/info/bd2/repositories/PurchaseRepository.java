@@ -9,4 +9,6 @@ public interface PurchaseRepository extends CrudRepository<Purchase, Long> {
     List<Purchase> findByUserUsername (String username);
 
     long countByDateBetween(Date from, Date to);
+
+	Optional<Purchase> findByCode(String code);
 }

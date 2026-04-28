@@ -1,23 +1,45 @@
 package unlp.info.bd2.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "item_services")
 public class ItemService {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_service_seq")
+    @SequenceGenerator(name = "item_service_seq", sequenceName = "item_service_sequence", allocationSize = 50)
     Long id;
 
+    @Column(nullable = false)
     private int quantity;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchase_id", nullable = false)
     private Purchase purchase;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "service_id", nullable = false)
     private Serv service;
-
+    
     public ItemService(int quantity, Serv managedService, Purchase purchase) {
     	this.quantity = quantity;
     	this.service = managedService;
     	this.purchase = purchase;
-	}
+    }
+    
+    public ItemService() {}
 
-	public Long getId() {
+    public Long getId() {
         return id;
     }
 

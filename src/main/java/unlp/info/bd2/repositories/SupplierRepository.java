@@ -19,4 +19,6 @@ public interface SupplierRepository extends CrudRepository<Supplier, Long> {
     ORDER BY COUNT(p) DESC
     """)
     List<Supplier> getTopSuppliers(Pageable pageable);
+
+	Optional<Supplier> findByAuthorizationNumber(String authorizationNumber);
 }

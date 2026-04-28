@@ -14,7 +14,7 @@ public interface ServiceRepository extends CrudRepository<Serv, Long> {
     GROUP BY i.service
     ORDER BY SUM(i.quantity) DESC
     """)
-    List<Serv> getMostDemandedService(Pageable pageable); 
-    
-    
+    List<Serv> getMostDemandedService(Pageable pageable);
+
+	Optional<Serv> findByNameAndSupplierId(String name, Long id); 
 }

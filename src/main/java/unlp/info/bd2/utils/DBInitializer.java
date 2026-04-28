@@ -32,16 +32,16 @@ public class DBInitializer {
         Supplier supplier5 = this.toursService.createSupplier("Dream Destinations", "24680");
 
         // Servicios
-        Service service1 = this.toursService.addServiceToSupplier("Gaucho Day Local Bakery", 3, "Tortas fritas y churros", supplier1);
-        Service service2 = this.toursService.addServiceToSupplier("Souvenir mugs", 7, "Printed Mugs", supplier2);
-        Service service3 = this.toursService.addServiceToSupplier("Delta Coffe", 4, "Coffee and tea shop", supplier3);
-        Service service4 = this.toursService.addServiceToSupplier("Architectural Expedition Book", 25, "Most famous architectures with details", supplier4);
-        Service service5 = this.toursService.addServiceToSupplier("Historical City Tour e-book", 40, "Learn about the city's history", supplier2);
-        Service service6 = this.toursService.addServiceToSupplier("souvenir t-shirt", 10, "I love Buenos Aires t-shirt", supplier1);
-        Service service7 = this.toursService.addServiceToSupplier("souvenir t-shirt", 10, "I love Argentina t-shirt", supplier1);
-        Service service8 = this.toursService.addServiceToSupplier("souvenir photograph", 5, "Souvenir photo at tourist spot", supplier3);
-        Service service9 = this.toursService.addServiceToSupplier("souvenir retrato", 5, "Another Souvenir", supplier3);
-        Service service10 = this.toursService.addServiceToSupplier("souvenir retrato 2", 5, "Another Souvenir 2", supplier3);
+        Serv service1 = this.toursService.addServiceToSupplier("Gaucho Day Local Bakery", 3, "Tortas fritas y churros", supplier1);
+        Serv service2 = this.toursService.addServiceToSupplier("Souvenir mugs", 7, "Printed Mugs", supplier2);
+        Serv service3 = this.toursService.addServiceToSupplier("Delta Coffe", 4, "Coffee and tea shop", supplier3);
+        Serv service4 = this.toursService.addServiceToSupplier("Architectural Expedition Book", 25, "Most famous architectures with details", supplier4);
+        Serv service5 = this.toursService.addServiceToSupplier("Historical City Tour e-book", 40, "Learn about the city's history", supplier2);
+        Serv service6 = this.toursService.addServiceToSupplier("souvenir t-shirt", 10, "I love Buenos Aires t-shirt", supplier1);
+        Serv service7 = this.toursService.addServiceToSupplier("souvenir t-shirt", 10, "I love Argentina t-shirt", supplier1);
+        Serv service8 = this.toursService.addServiceToSupplier("souvenir photograph", 5, "Souvenir photo at tourist spot", supplier3);
+        Serv service9 = this.toursService.addServiceToSupplier("souvenir retrato", 5, "Another Souvenir", supplier3);
+        Serv service10 = this.toursService.addServiceToSupplier("souvenir retrato 2", 5, "Another Souvenir 2", supplier3);
 
         // Stops
         Stop stop1 = this.toursService.createStop ("Diagonal Norte",	"Obelisco / Catedral Metropolitana / Casa Rosada / Museo del Bicentenario / Galería Güemes / Cabildo de Buenos Aires");

@@ -30,4 +30,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     List<TourGuideUser> getTourGuidesWithRating1();  
     
     List<User> findById(int id);
+
+	Optional<User> findByUsername(String username);
 }

@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityManager;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,20 +26,29 @@ public class TourServiceImpl implements ToursService {
     private ServiceRepository serviceRepo;
     private SupplierRepository supplierRepo;
     private ReviewRepository reviewRepo; 
+    private StopRepository stopRepo;
+    private ItemServiceRepository itemRepo;
+    private EntityManager entityManager;
 
     @Autowired
-    public TourServiceImpl(UserRepository userRepo,
+    public TourServiceImpl(PurchaseRepository purchaseRepo,
+    					 ReviewRepository reviewRepo,
                          RouteRepository routeRepo,
-                         PurchaseRepository purchaseRepo,
                          ServiceRepository serviceRepo,
                          SupplierRepository supplierRepo,
-                         ReviewRepository reviewRepo) {
+                         UserRepository userRepo,
+                         StopRepository stopRepo,
+                         ItemServiceRepository itemRepo,
+                         EntityManager entityManager) {
     this.userRepo = userRepo;
     this.routeRepo = routeRepo;
     this.purchaseRepo = purchaseRepo;
     this.serviceRepo = serviceRepo;
     this.supplierRepo = supplierRepo;
     this.reviewRepo = reviewRepo;
+    this.stopRepo = stopRepo;
+    this.itemRepo = itemRepo;
+    this.entityManager = entityManager;
     }
 
     @Override
@@ -175,123 +187,174 @@ public class TourServiceImpl implements ToursService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<User> getUserById(Long id) throws ToursException {
 		return userRepo.findById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<User> getUserByUsername(String username) throws ToursException {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return userRepo.findByUsername(username);
 	}
 
 	@Override
 	public User updateUser(User user) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		if (!userRepo.existsById(user.getId())) {
+			throw new ToursException("Usuario no encontrado");
+		}
+		return userRepo.save(user);
 	}
 
 	@Override
 	public void deleteUser(User user) throws ToursException {
-		// TODO Auto-generated method stub
-		
+		if (!user.isActive()) {
+			throw new ToursException("El usuario se encuentra desactivado");
+		}
+		if (user instanceof TourGuideUser) {
+			Long count = routeRepo.countRoutesByGuide(user.getId());
+			if (count > 0) {
+				throw new ToursException("El usuario no puede ser desactivado");
+			}
+		}
+		if (user.getPurchaseList() != null & !user.getPurchaseList().isEmpty()) {
+			user.setActive(false);
+		} else {
+			userRepo.delete(user);
+		}
 	}
 
 	@Override
 	public Stop createStop(String name, String description) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		Stop stop = new Stop(name, description);
+		return stopRepo.save(stop);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Stop> getStopByNameStart(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return stopRepo.findByNameStartingWith(name);
 	}
 
 	@Override
 	public Route createRoute(String name, float price, float totalKm, int maxNumberOfUsers, List<Stop> stops)
 			throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		Route route = new Route(name, price, totalKm, maxNumberOfUsers, stops);
+		return routeRepo.save(route);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Route> getRouteById(Long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return routeRepo.findById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Route> getRoutesBelowPrice(float price) {
-		// TODO Auto-generated method stub
-		return null;
+		return routeRepo.findByPriceLessThan(price);
 	}
 
 	@Override
 	public void assignDriverByUsername(String username, Long idRoute) throws ToursException {
-		// TODO Auto-generated method stub
-		
+		Optional<User> optUSer = userRepo.findByUsername(username);
+		if (optUSer.isEmpty() || !(optUSer.get() instanceof DriverUser)) {
+			throw new ToursException("No pudo realizarse la asignación");
+		}
+		Optional<Route> optRoute = routeRepo.finById(idRoute);
+		if (optRoute.isEmpty()) {
+			throw new ToursException("No pudo realizarse la asignación");
+		}
+		Route route = optRoute.get();
+		route.addDriver((DriverUser) optUSer.get());	
 	}
 
 	@Override
 	public void assignTourGuideByUsername(String username, Long idRoute) throws ToursException {
-		// TODO Auto-generated method stub
-		
+		Optional<User> optUSer = userRepo.findByUsername(username);
+		if (optUSer.isEmpty() || !(optUSer.get() instanceof DriverUser)) {
+			throw new ToursException("No pudo realizarse la asignación");
+		}
+		Optional<Route> optRoute = routeRepo.finById(idRoute);
+		if (optRoute.isEmpty()) {
+			throw new ToursException("No pudo realizarse la asignación");
+		}
+		Route route = optRoute.get();
+		route.addTourGuide((TourGuideUser) optUSer.get());
 	}
 
 	@Override
 	public Supplier createSupplier(String businessName, String authorizationNumber) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		Supplier supplier = new Supplier(businessName, authorizationNumber);
+		return supplierRepo.save(supplier);
 	}
 
 	@Override
 	public Serv addServiceToSupplier(String name, float price, String description, Supplier supplier)
 			throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			Serv service = new Serv(name, price, description, supplier);
+			Serv saved = serviceRepo.save(service);
+			entityManager.flush();
+			return saved;
+		} catch(Exception e) {
+			throw new ToursException("Constraint Violation");
+		}
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Supplier> getSupplierById(Long id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return supplierRepo.findById(id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Supplier> getSupplierByAuthorizationNumber(String authorizationNumber) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return supplierRepo.findByAuthorizationNumber(authorizationNumber);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Serv> getServiceByNameAndSupplierId(String name, Long id) throws ToursException {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return serviceRepo.findByNameAndSupplierId(name, id);
 	}
 
 	@Override
 	public Purchase createPurchase(String code, Date date, Route route, User user) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		long count = routeRepo.countPurchasesByRoute(route.getId());
+		if (count >= route.getMaxNumberUsers()) {
+			throw new ToursException("No se puede realizarse la compra");
+		}
+		try {
+			Purchase purchase = new Purchase(code, date, route, user);
+			Purchase saved = purchaseRepo.save(purchase);
+			entityManager.flush();
+			return saved;
+		} catch (Exception e) {
+			throw new ToursException("Constrain Violation");
+		}
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Purchase> getPurchaseByCode(String code) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		return purchaseRepo.findByCode(code);
 	}
 
 	@Override
 	public void deletePurchase(Purchase purchase) throws ToursException {
-		// TODO Auto-generated method stub
-		
+		if (purchase.getUser() != null) {
+			purchase.getUser().deletePurchase(purchase);
+		}
+		purchaseRepo.delete(purchase);
+		entityManager.flush();
 	}
 
 	@Override
 	public Review addReviewToPurchase(int rating, String comment, Purchase purchase) throws ToursException {
-		// TODO Auto-generated method stub
-		return null;
+		Review review = new Review(rating, comment, purchase);
+		purchase.setReview(review);
+		return reviewRepo.save(review);
 	}
 }

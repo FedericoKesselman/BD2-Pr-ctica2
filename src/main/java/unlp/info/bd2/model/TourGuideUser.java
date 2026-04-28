@@ -2,22 +2,32 @@ package unlp.info.bd2.model;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 
+@Entity
+@DiscriminatorValue("TOUR_GUIDE")
 public class TourGuideUser extends User {
 
-	private String education;
+    @Column
+    private String education;
 
-    private List<Route> routes;
+    @ManyToMany(mappedBy = "tourGuideList") 
+    private List<Route> routes = new ArrayList<>();
     
-    public TourGuideUser(String username, String password, String name, String email, Date birthdate, 
-    					String phoneNumber, String education) {
-		super(username, password, name, email, birthdate, phoneNumber);
-		this.education = education;
-		this.routes = new LinkedList<>();
-	}
+    public TourGuideUser(String username, String password, String name, String email, java.util.Date birthdate, 
+    		String phoneNumber, String education) {
+    super(username, password, name, email, birthdate, phoneNumber);
+    this.education = education;
+    this.routes = new LinkedList<>();
+    }
+    
+    public TourGuideUser() {}
+
 
     public String getEducation() {
         return education;

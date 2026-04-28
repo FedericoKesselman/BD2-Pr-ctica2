@@ -3,23 +3,74 @@ package unlp.info.bd2.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "routes")
 public class Route {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "route_seq")
+    @SequenceGenerator(name = "route_seq", sequenceName = "route_sequence", allocationSize = 50)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private float price;
 
+    @Column(nullable = false)
     private float totalKm;
 
+    @Column(nullable = false)
     private int maxNumberUsers;
 
-    private List<Stop> stops;
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(
+	    name = "route_stops",
+	    joinColumns = @JoinColumn(name = "route_id"),
+	    inverseJoinColumns = @JoinColumn(name = "stop_id")
+	)
+	private List<Stop> stops = new ArrayList<>();
 
-    private List<DriverUser> driverList;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "route_drivers",
+        joinColumns = @JoinColumn(name = "route_id"),
+        inverseJoinColumns = @JoinColumn(name = "driver_id")
+    )
+    private List<DriverUser> driverList = new ArrayList<>();
 
-    private List<TourGuideUser> tourGuideList;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "route_tour_guides",
+        joinColumns = @JoinColumn(name = "route_id"),
+        inverseJoinColumns = @JoinColumn(name = "tour_guide_id")
+    )
+    private List<TourGuideUser> tourGuideList = new ArrayList<>();
+    
+    public Route(String name2, float price2, float totalKm2, int maxNumberOfUsers, List<Stop> stops2) {
+    	this.name = name2;
+    	this.price = price2;
+    	this.totalKm = totalKm2;
+    	this.maxNumberUsers = maxNumberOfUsers;
+    	this.stops = stops2;
+    }
+    
+    public Route() {}
 
     public Long getId() {
         return id;
@@ -83,6 +134,22 @@ public class Route {
 
     public void setTourGuideList(List<TourGuideUser> tourGuideList) {
         this.tourGuideList = tourGuideList;
+    }
+
+    public void addDriver(DriverUser driver) {
+        this.driverList.add(driver);
+    }
+
+    public void removeDriver(DriverUser driver) {
+        this.driverList.remove(driver);
+    }
+
+    public void addTourGuide(TourGuideUser tourGuide) {
+        this.tourGuideList.add(tourGuide);
+    }
+
+    public void removeTourGuide(TourGuideUser tourGuide) {
+        this.tourGuideList.remove(tourGuide);
     }
 
 }

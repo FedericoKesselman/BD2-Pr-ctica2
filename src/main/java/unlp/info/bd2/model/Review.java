@@ -1,16 +1,42 @@
 package unlp.info.bd2.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "reviews")
 public class Review {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_seq")
+    @SequenceGenerator(name = "review_seq", sequenceName = "review_sequence", allocationSize = 50)
     private Long id;
 
+    @Column(nullable = false)
     private int rating;
 
+    @Column
     private String comment;
 
+    @OneToOne
+    @JoinColumn(name = "purchase_id", nullable = false)
     private Purchase purchase;
+    
 
+	public Review(int rating2, String comment2, Purchase purchase2) {
+		this.rating = rating2;
+		this.comment = comment2;
+		this.purchase = purchase2;
+	}
+	
+	public Review() {}
 
     public Long getId() {
         return id;

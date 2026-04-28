@@ -1,14 +1,34 @@
 package unlp.info.bd2.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "stops")
 public class Stop {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stop_seq")
+    @SequenceGenerator(name = "stop_seq", sequenceName = "stop_sequence", allocationSize = 50)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column
     private String description;
-
+    
+    public Stop(String name2, String description2) {
+    	this.name = name2;
+    	this.description = description2;
+    }
+    
+    public Stop() {}
 
     public Long getId() {
         return id;
