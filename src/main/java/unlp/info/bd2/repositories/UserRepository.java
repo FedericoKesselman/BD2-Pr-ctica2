@@ -20,16 +20,23 @@ public interface UserRepository extends CrudRepository<User, Long> {
     List<User> getUserSpendingMoreThan(@Param("amount") float amount);
 
     @Query("""
-    SELECT DISTINCT rg
-    FROM Purchase p
-    JOIN p.review rv
-    JOIN p.route r
-    JOIN r.tourGuides tg
-    WHERE rv.rating = 1
+        SELECT DISTINCT rg
+        FROM Purchase p
+        JOIN p.review rv
+        JOIN p.route r
+        JOIN r.tourGuides tg
+        WHERE rv.rating = 1
     """)
     List<TourGuideUser> getTourGuidesWithRating1();  
     
     List<User> findById(int id);
 
 	Optional<User> findByUsername(String username);
+
+    @Modifiying
+    @Query("""
+        value = "DELETE FROM 'User" WHERE id = :id",
+        nativeQuery = true
+    """)
+    void hardDeleteById(@Param("id") Long id);
 }
