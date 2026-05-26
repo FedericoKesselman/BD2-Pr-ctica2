@@ -16,7 +16,7 @@ public interface SupplierRepository extends CrudRepository<Supplier, Long> {
     JOIN sv.items i 
     JOIN i.purchase p
     GROUP BY s
-    ORDER BY COUNT(p) DESC
+    ORDER BY COUNT(i) DESC
     """)
     List<Supplier> getTopSuppliers(Pageable pageable);
 

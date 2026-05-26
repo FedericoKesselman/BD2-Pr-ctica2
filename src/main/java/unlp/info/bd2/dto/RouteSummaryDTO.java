@@ -1,11 +1,11 @@
 package unlp.info.bd2.dto;
 
-public class RouteDTO {
+public class RouteSummaryDTO {
     private String routeName;
     private Long purchaseCount;
     private Double averagePrice;
 
-    public RouteDTO(String routeName, Long purchaseCount, Double averagePrice) {
+    public RouteSummaryDTO(String routeName, Long purchaseCount, Double averagePrice) {
         this.routeName = routeName;
         this.purchaseCount = purchaseCount;
         this.averagePrice = averagePrice;

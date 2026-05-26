@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.*;
 import unlp.info.bd2.model.Route;
 import unlp.info.bd2.model.Stop;
+import unlp.info.bd2.dto.RouteSummaryDTO;
 
 public interface RouteRepository extends CrudRepository<Route, Long> {
 
@@ -18,20 +19,22 @@ public interface RouteRepository extends CrudRepository<Route, Long> {
     Long getMaxStopOfRoutes();
 
     @Query("""
-    SELECT r 
-    FROM Route r
-    WHERE NOT EXISTS (
-        SELECT p FROM Purchase p WHERE p.route = r    
+        SELECT r 
+        FROM Route r
+        WHERE NOT EXISTS (
+            SELECT p FROM 
+            Purchase p 
+            WHERE p.route = r    
     )
     """)
     List<Route> getRoutesNotSell(); 
 
     @Query("""
-    SELECT p.route
-    FROM Purchase p
-    JOIN p.review rv
-    GROUP BY p.route
-    ORDER BY AVG(rv.rating) DESC
+        SELECT p.route
+        FROM Purchase p
+        JOIN p.review r
+        GROUP BY p.route
+        ORDER BY AVG(r.rating) DESC
     """)
     List<Route> getTop3RoutesWithMaxRating(Pageable pageable);
     
@@ -44,4 +47,16 @@ public interface RouteRepository extends CrudRepository<Route, Long> {
 
 	@Query("SELECT COUNT(p) FROM Purchase p WHERE p.route.id = :id")
 	long countPurchasesByRoute(Long id);
+
+    @Query("""
+        SELECT new unlp.info.bd2.dto.RouteSummaryDTO(
+            r.name,
+            COUNT(p),
+            AVG(p.totalPrice)
+        )
+        FROM Route r
+        LEFT JOIN Purchase p ON p.route = r
+        GROUP BY r.name
+    """)
+    List<RouteSummaryDTO> getRouteSummary();
 }
